@@ -31,6 +31,10 @@ end;
 
 -- bulk collect
 
+    type dum_recs_tp is table of dum_cur%rowtype;
+    dum_recs dum_recs_tp;
+
+
 << batch_loop >>
 loop
     fetch dum_cur bulk collect into dum_recs limit 1000;
