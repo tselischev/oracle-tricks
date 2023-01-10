@@ -1,5 +1,7 @@
 declare
   l_sql_stmt VARCHAR2(32767);
+  l_status varchar2(100);  
+  
 begin
   begin
   dbms_parallel_execute.drop_task (task_name => 'BKI_STEP0');
@@ -12,6 +14,11 @@ begin
                                                     table_column => 'N30AGID',
                                                     chunk_size   => 10000);
  
+        SELECT status into l_status
+        FROM   user_parallel_execute_tasks
+        where task_name = 'BKI_EVENT_CREDIT';
+
+        if l_status = 'CHUNKED' then
 
   l_sql_stmt := '
 begin
@@ -23,8 +30,10 @@ FROM   TABLE(dw.pkg_nbki.f_table_nbki_ttt_step0(CURSOR
 exception when others then null;
 end;';
 
-  DBMS_PARALLEL_EXECUTE.run_task(task_name      => 'BKI_STEP0',
-                                 sql_stmt       => l_sql_stmt,
-                                 language_flag  => DBMS_SQL.NATIVE,
-                                 parallel_level => 20); 
+        DBMS_PARALLEL_EXECUTE.run_task(task_name      => 'BKI_STEP0',
+                                       sql_stmt       => l_sql_stmt,
+                                       language_flag  => DBMS_SQL.NATIVE,
+                                       parallel_level => 20); 
+
+        end if;
 END;
