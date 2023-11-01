@@ -1,8 +1,9 @@
 select 
 a.SQL_TEXT, a.SQL_FULLTEXT,
+u.username,
 s.* from (
 select 
-s.sql_id, s.module,
+s.sql_id, s.module, s.PARSING_USER_ID,
 sum(ELAPSED_TIME_DELTA)/1000000 "Elapsed Time(s)",
 sum(CPU_TIME_DELTA)/1000000 "CPU Time(s)",
 sum(executions_delta) "Executions",
@@ -17,10 +18,10 @@ sum(BUFFER_GETS_DELTA)/decode(sum(ROWS_PROCESSED_DELTA), 0, 1, sum(ROWS_PROCESSE
 sum(DISK_READS_DELTA)/decode(sum(ROWS_PROCESSED_DELTA), 0, 1, sum(ROWS_PROCESSED_DELTA)) prds_per_row,
 sum(BUFFER_GETS_DELTA)/decode(sum(executions_delta), 0, 1, sum(executions_delta)) gets_per_exec
 from dba_hist_sqlstat s
-where snap_id between 134114 and 134117
-group by s.sql_id, s.module
-order by 3 desc
+where snap_id between 134138 and 134141
+group by s.sql_id, s.module, s.PARSING_USER_ID
 ) s,
-v$sqlarea a
-where rownum <= 100
-and a.SQL_ID = s.sql_id
+v$sqlarea a, dba_users u
+where a.SQL_ID = s.sql_id
+and u.user_id = s.PARSING_USER_ID
+order by 7 desc
