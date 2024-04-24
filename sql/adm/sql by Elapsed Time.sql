@@ -1,5 +1,5 @@
 select 
-a.SQL_TEXT, a.SQL_FULLTEXT,
+dbms_lob.substr(a.SQL_TEXT, 1000) sql_begin, a.SQL_TEXT,
 u.username,
 s.* from (
 select 
@@ -18,10 +18,10 @@ sum(BUFFER_GETS_DELTA)/decode(sum(ROWS_PROCESSED_DELTA), 0, 1, sum(ROWS_PROCESSE
 sum(DISK_READS_DELTA)/decode(sum(ROWS_PROCESSED_DELTA), 0, 1, sum(ROWS_PROCESSED_DELTA)) prds_per_row,
 sum(BUFFER_GETS_DELTA)/decode(sum(executions_delta), 0, 1, sum(executions_delta)) gets_per_exec
 from dba_hist_sqlstat s
-where snap_id between 134138 and 134141
+where snap_id >= 134231
 group by s.sql_id, s.module, s.PARSING_USER_ID
 ) s,
-v$sqlarea a, dba_users u
-where a.SQL_ID = s.sql_id
-and u.user_id = s.PARSING_USER_ID
+dba_hist_sqltext a, dba_users u
+where a.SQL_ID(+) = s.sql_id
+and u.user_id(+) = s.PARSING_USER_ID
 order by 7 desc
