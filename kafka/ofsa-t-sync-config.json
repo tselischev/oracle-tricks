@@ -1,0 +1,13 @@
+{
+  "name": "ofsa-t-connector",
+  "config": {
+      "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector", 
+      "tasks.max": 10,
+      "topics": "DWH.REF_EMPLOYEES", 
+      "connection.url": "jdbc:oracle:thin:@m7a10:1521/ofsa_t?user=dwh&password=***",
+      "auto.create": "true",
+      "auto.evolve": "true",
+      "table.name.format": "DWH.REF_EMPLOYEES",
+      "batch.size" : "100000"
+} 
+}
