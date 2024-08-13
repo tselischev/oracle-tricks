@@ -3,10 +3,14 @@
   "config": {
     "tasks.max": 10,
     "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
-    "connection.url":"jdbc:oracle:thin:@ofsa:1521/ofsa?user=stage&password=***",
-    "mode":"bulk",
-    "query":"SELECT /*+ parallel(10) */ * FROM dwh.REF_EMPLOYEES",
-    "topic.prefix":"DWH.REF_EMPLOYEES",
-    "batch.size" : "100000"
+    "connection.url":"jdbc:oracle:thin:@ofsa:1521/ofsa?user=stage&password=stage",
+    "validate.non.null": false,
+    "table.whitelist": "DWH.REF_EMPLOYEES",
+    "topic.prefix":"DWH.",
+    "batch.size" : "100000",
+    "mode" : "timestamp",
+    "timestamp.column.name" : "EFFECTIVE_START",
+    "topic.creation.default.replication.factor": 1,
+    "topic.creation.default.partitions": 10
   }
 }
